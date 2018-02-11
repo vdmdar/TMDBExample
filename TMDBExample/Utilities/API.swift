@@ -10,21 +10,33 @@ import Foundation
 
 struct API {
     
-    static func getMovie() {
-        
-        guard let d = Path.servicePath(path: "movie/330459", items: [:]) else { return }
-
-        let request = Request(url: d, method: .GET)
-        
-        request?.start(success: {
-            let movie = try? JSONDecoder().decode(Movie.self, from: $0)
-            
-            
-        }, failure: { error in
-            print(error)
-            print(error)
-        })
+    static func getMostPopular(page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
+        let path = "discover/movie"
+        getMovies(path: path, page: page, success: success, failure: failure)
     }
     
+    static func getUpcoming(page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
+        let path = "movie/upcoming"
+        getMovies(path: path, page: page, success: success, failure: failure)
+    }
     
+    static func getMovies(path: String, page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
+        let queryItems: [String: Any] = ["page": page]
+        let urlStr = Path.servicePath(path: path, items: queryItems)
+        let request = Request(url: urlStr, method: .GET)
+        request?.start(success: { data in
+            let result = try? JSONDecoder().decode(ResponsedData.self, from: data)
+            asyncMain {
+                success(result?.results ?? [])
+            }
+        }, failure: { error in
+            asyncMain { failure(error) }
+        })
+        
+    }
+}
+
+private struct ResponsedData: Decodable {
+    let page: Int
+    let results: [Movie]
 }

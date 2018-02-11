@@ -16,14 +16,12 @@ struct Movie: Decodable {
     let posterPath: String
     let backdropPath: String
     let releaseDate: Date?
-    let runtime: Int
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MovieCodingKeys.self)
         id = try container.decode(Int.self, forKey: .id)
         title = try container.decode(String.self, forKey: .title)
         overview = try container.decode(String.self, forKey: .overview)
-        runtime = try container.decode(Int.self, forKey: .runtime)
         
         let date = try container.decode(String.self, forKey: .releaseDate)
         releaseDate = Formatter.defaultDateFormatter.date(from: date)
