@@ -17,8 +17,15 @@ extension Nameable {
     }
 }
 
+protocol NibGettable: Nameable {}
+extension NibGettable {
+    static var nib: UINib {
+        return UINib(nibName: name, bundle: nil)
+    }
+}
+
 struct Path {
-    static func imagePath(imageWidth: Int = Constant.defaultImageWidth, filePath: String) -> String {
+    static func imagePath(imageWidth: Int, filePath: String) -> String {
         return Constant.cdnBaseUrl + "w\(imageWidth)" + filePath
     }
     

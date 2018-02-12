@@ -60,13 +60,20 @@ final class MoviesCollectionViewController: UICollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.name, for: indexPath) as! MovieCollectionViewCell
-        let urlStr = movies[indexPath.row].posterPath
+        let urlStr = movies[indexPath.row].posterPath(withWidth: Constant.defaultImageWidth)
         
         ImageManager.getImage(url: urlStr) {
             cell.posterImageView.image = $0
         }
         
         return cell
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movie = movies[indexPath.row]
+        let movieVc = MovieViewController()
+        movieVc.movie = movie
+        navigationController?.pushViewController(movieVc, animated: true)
     }
     
 }

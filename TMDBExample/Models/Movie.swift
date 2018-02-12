@@ -13,9 +13,9 @@ struct Movie: Decodable {
     let id: Int
     let title: String
     let overview: String
-    let posterPath: String
-    let backdropPath: String
     let releaseDate: Date?
+    private let posterPath: String
+    private let backdropPath: String
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MovieCodingKeys.self)
@@ -26,14 +26,18 @@ struct Movie: Decodable {
         let date = try container.decode(String.self, forKey: .releaseDate)
         releaseDate = Formatter.defaultDateFormatter.date(from: date)
         
-        let posterPath = try container.decode(String.self, forKey: .posterPath)
-        self.posterPath = Path.imagePath(filePath: posterPath)
-        
-        let backdropPath = try container.decode(String.self, forKey: .backdropPath)
-        self.backdropPath = Path.imagePath(filePath: backdropPath)
+        posterPath = try container.decode(String.self, forKey: .posterPath)
+        backdropPath = try container.decode(String.self, forKey: .backdropPath)    }
+    
+    func posterPath(withWidth width: Int) -> String {
+        return Path.imagePath(imageWidth: width, filePath: posterPath)
     }
     
-    enum MovieCodingKeys: String, CodingKey {
+    func backdropPath(withWidth width: Int) -> String {
+        return Path.imagePath(imageWidth: width, filePath: backdropPath)
+    }
+    
+    private enum MovieCodingKeys: String, CodingKey {
         case posterPath = "poster_path"
         case backdropPath = "backdrop_path"
         case releaseDate = "release_date"
