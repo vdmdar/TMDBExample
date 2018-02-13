@@ -94,3 +94,31 @@ struct ImageManager {
     
 }
 
+struct FlowLayouts {
+    
+    static var moviewCollectionLayout: UICollectionViewFlowLayout {
+        let screenW = UIScreen.main.bounds.width
+        let divisor: CGFloat = 4
+        let width = (screenW / divisor) * 1.2
+        let height = width * 1.5
+        let spacing: CGFloat = (screenW / divisor) * 0.2 / 4
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: width, height: height)
+        layout.minimumInteritemSpacing = spacing
+        layout.minimumLineSpacing = 8
+        layout.scrollDirection = .vertical
+        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        return layout
+    }
+    
+    static var similarMoviesLayout: UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 80, height: 160)
+        layout.minimumInteritemSpacing = 4
+        layout.scrollDirection = .horizontal
+        return layout
+    }
+    
+}
+

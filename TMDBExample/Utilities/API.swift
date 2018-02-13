@@ -12,7 +12,14 @@ struct API {
     
     static func getMostPopular(page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
         let path = "discover/movie"
-        getMovies(path: path, page: page, success: success, failure: failure)
+        let items: [String: Any] = ["sort_by": "popularity.desc"]
+        getMovies(path: path, page: page, queries: items, success: success, failure: failure)
+    }
+    
+    static func getMoviesByGenre(genreId: Int, page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
+        let path = "discover/movie"
+        let items: [String: Any] = ["with_genres": genreId]
+        getMovies(path: path, page: page, queries: items, success: success, failure: failure)
     }
     
     static func getUpcoming(page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
@@ -20,8 +27,21 @@ struct API {
         getMovies(path: path, page: page, success: success, failure: failure)
     }
     
-    static func getMovies(path: String, page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
-        let queryItems: [String: Any] = ["page": page]
+    static func getSimilar(movieId: Int, page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
+        let path = "movie/\(movieId)/similar"
+        getMovies(path: path, page: page, success: success, failure: failure)
+    }
+    
+    static func getMovies(path: String,
+                          page: Int,
+                          queries: [String: Any]? = nil,
+                          success: @escaping ([Movie]) -> Void,
+                          failure: @escaping (Error) -> Void) {
+        var queryItems: [String: Any] = ["page": page]
+        queries?.forEach {
+            queryItems[$0.key] = $0.value
+        }
+        
         let urlStr = Path.servicePath(path: path, items: queryItems)
         let request = Request(url: urlStr, method: .GET)
         request?.start(success: { data in

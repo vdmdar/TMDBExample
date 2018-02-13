@@ -11,28 +11,12 @@ import UIKit
 
 final class MoviesCollectionViewController: UICollectionViewController {
     
-    var movies: [Movie] = []
+    private var movies: [Movie] = []
+    let moviesFetcher: Fetcher<Movie>
     
-    init(title: String?) {
-        
-        let screenW = UIScreen.main.bounds.width
-        
-        let divisor: CGFloat = 4
-        
-        let width = (screenW / divisor) * 1.2
-        let height = width * 1.5
-        
-        let spacing: CGFloat = (screenW / divisor) * 0.2 / 4
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.itemSize = CGSize(width: width, height: height)
-        layout.minimumInteritemSpacing = spacing
-        layout.minimumLineSpacing = 8
-        layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        
-        super.init(collectionViewLayout: layout)
-        self.title = title
+    init(collectionViewLayout: UICollectionViewLayout = FlowLayouts.moviewCollectionLayout, moviesFetcher: Fetcher<Movie>) {
+        self.moviesFetcher = moviesFetcher
+        super.init(collectionViewLayout: collectionViewLayout)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -41,17 +25,9 @@ final class MoviesCollectionViewController: UICollectionViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let nib = UINib(nibName: MovieCollectionViewCell.name, bundle: nil)
-        collectionView?.register(nib, forCellWithReuseIdentifier: MovieCollectionViewCell.name)
-        
+        collectionView?.register(MovieCollectionViewCell.nib, forCellWithReuseIdentifier: MovieCollectionViewCell.name)
         collectionView?.backgroundColor = .white
-        
-        API.getUpcoming(page: 1, success: {
-            self.movies = $0
-            self.collectionView?.reloadData()
-        }, failure: { _ in
-            print("👹👹👹👹👹👹👹")
-        })
+        fetchMovies()
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -71,9 +47,20 @@ final class MoviesCollectionViewController: UICollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let movie = movies[indexPath.row]
-        let movieVc = MovieViewController()
-        movieVc.movie = movie
+        let movieVc = MovieViewController(movie: movie)
         navigationController?.pushViewController(movieVc, animated: true)
     }
     
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row > movies.count - 2 {
+            fetchMovies()
+        }
+    }
+    
+    private func fetchMovies() {
+        moviesFetcher.fetch { newMoviesData in
+            self.movies += newMoviesData
+            self.collectionView?.reloadData()
+        }
+    }
 }

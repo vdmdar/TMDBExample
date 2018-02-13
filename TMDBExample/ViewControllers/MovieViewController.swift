@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-final class MovieViewController: UITableViewController {
+final class MovieViewController: CustomTableViewController {
     
     enum Section: String {
         case backdrop
@@ -18,13 +18,16 @@ final class MovieViewController: UITableViewController {
         case similar = "Similar movies"
     }
     
-    var movie: Movie? = nil
+    let movie: Movie
     
     var sections: [Section] = [.backdrop, .details]
     
     var cast: [Cast] = []
     
-    init() {
+    var similarMovies: [Movie] = []
+    
+    init(movie: Movie) {
+        self.movie = movie
         super.init(style: .plain)
     }
     
@@ -34,20 +37,10 @@ final class MovieViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.tableFooterView = UIView()
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.estimatedRowHeight = 50
-        title = movie?.title
-        tableView.register(MovieDetailsTableViewCell.nib, forCellReuseIdentifier: MovieDetailsTableViewCell.name)
-        tableView.register(MovieBackdropTableViewCell.nib, forCellReuseIdentifier: MovieBackdropTableViewCell.name)
-        tableView.register(MovieCastTableViewCell.nib, forCellReuseIdentifier: MovieCastTableViewCell.name)
-        
-        if #available(iOS 11.0, *) {
-            tableView.contentInsetAdjustmentBehavior = .never
-        }
-        tableView.separatorStyle = .none
+        title = movie.title
+        setupTableView()
         getCast()
-
+        getSimilar()
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -73,42 +66,13 @@ final class MovieViewController: UITableViewController {
             return getDetailsCell(from: tableView, indexPath: indexPath)
         case .cast:
             return getCastCell(from: tableView, indexPath: indexPath)
-        default:
-            return UITableViewCell()
+        case .similar:
+            return getSimilarMoviesCell(from: tableView, indexPath: indexPath)
         }
         
     }
-    
-    func getDetailsCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: MovieDetailsTableViewCell.name, for: indexPath) as! MovieDetailsTableViewCell
-        cell.overviewTextView.text = movie?.overview
-        return cell
-    }
-    
-    func getBackdropCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: MovieBackdropTableViewCell.name, for: indexPath) as! MovieBackdropTableViewCell
-        let imagePath = movie!.backdropPath(withWidth: 1280)
-        ImageManager.getImage(url: imagePath, completion: {
-            cell.backdropImageView.image = $0
-        })
-        return cell
-    }
-    
-    func getCastCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: MovieCastTableViewCell.name, for: indexPath) as! MovieCastTableViewCell
-        let actor = cast[indexPath.row]
-        cell.castNameLabel.text = actor.name
-        cell.castCharacterLabel.text = actor.character
-        let imagePath = actor.profileImagePath(imageWidth: 185)
-        ImageManager.getImage(url: imagePath, completion: {
-            cell.castImageView.image = $0
-        })
-        
-        return cell
-    }
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        
         let sec = sections[section]
         
         if sec == .backdrop {
@@ -127,16 +91,81 @@ final class MovieViewController: UITableViewController {
         return 32
     }
     
-    func getCast() {
-        let id = movie?.id
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return UIView()
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 20
+    }
+    
+    private func setupTableView() {
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 50
+        tableView.register(MovieDetailsTableViewCell.nib, forCellReuseIdentifier: MovieDetailsTableViewCell.name)
+        tableView.register(MovieBackdropTableViewCell.nib, forCellReuseIdentifier: MovieBackdropTableViewCell.name)
+        tableView.register(MovieCastTableViewCell.nib, forCellReuseIdentifier: MovieCastTableViewCell.name)
+        tableView.register(SimilarMoviesTableViewCell.nib, forCellReuseIdentifier: SimilarMoviesTableViewCell.name)
+        tableView.separatorStyle = .none
+        tableView.allowsSelection = false
+    }
+}
+
+extension MovieViewController {
+    
+    fileprivate func getDetailsCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MovieDetailsTableViewCell.name, for: indexPath) as! MovieDetailsTableViewCell
+        cell.overviewTextView.text = movie.overview
+        return cell
+    }
+    
+    fileprivate func getBackdropCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MovieBackdropTableViewCell.name, for: indexPath) as! MovieBackdropTableViewCell
+        let imagePath = movie.backdropPath(withWidth: 1280)
+        ImageManager.getImage(url: imagePath, completion: {
+            cell.backdropImageView.image = $0
+        })
+        return cell
+    }
+    
+    fileprivate func getCastCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: MovieCastTableViewCell.name, for: indexPath) as! MovieCastTableViewCell
+        let actor = cast[indexPath.row]
+        cell.castNameLabel.text = actor.name
+        cell.castCharacterLabel.text = actor.character
+        let imagePath = actor.profileImagePath(imageWidth: 300)
+        ImageManager.getImage(url: imagePath, completion: {
+            cell.castImageView.image = $0
+        })
         
-        API.getCast(movieId: id!, success: {
+        return cell
+    }
+    
+    fileprivate func getSimilarMoviesCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: SimilarMoviesTableViewCell.name, for: indexPath) as! SimilarMoviesTableViewCell
+        cell.collectionView.dataSource = self
+        cell.collectionView.delegate = self
+        return cell
+    }
+    
+}
+
+extension MovieViewController {
+    fileprivate func getCast() {
+        API.getCast(movieId: movie.id, success: {
             guard !$0.isEmpty else { return }
-            self.cast = $0
+            let moreThanTen = $0.count > 10
             
-            self.sections.append(.cast)
+            if moreThanTen {
+                let firstTen = ($0.sorted { $0.order < $1.order})
+                self.cast = Array(firstTen[0..<10])
+            } else {
+                self.cast = $0
+            }
+            
+            self.sections.insert(.cast, at: 2)
             self.tableView.beginUpdates()
-            self.tableView.insertSections([self.sections.index(of: .cast) ?? 2], with: .automatic)
+            self.tableView.insertSections([self.sections.index(of: .cast)!], with: .automatic)
             self.tableView.endUpdates()
             
         }, failure: {
@@ -144,4 +173,45 @@ final class MovieViewController: UITableViewController {
         })
     }
     
+    fileprivate func getSimilar() {
+        API.getSimilar(movieId: movie.id, page: 1, success: {
+            guard !$0.isEmpty else { return }
+            self.similarMovies = $0
+            if let indexOfCast = self.sections.index(of: .cast) {
+                self.sections.insert(.similar, at: indexOfCast + 1)
+            } else {
+                self.sections.append(.similar)
+            }
+            self.tableView.beginUpdates()
+            self.tableView.insertSections([self.sections.index(of: .similar)!], with: .automatic)
+            self.tableView.endUpdates()
+        }, failure: { error in
+            print(error)
+        })
+    }
 }
+
+extension MovieViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return similarMovies.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.name, for: indexPath) as! MovieCollectionViewCell
+        let urlStr = similarMovies[indexPath.row].posterPath(withWidth: Constant.defaultImageWidth)
+        
+        ImageManager.getImage(url: urlStr) {
+            cell.posterImageView.image = $0
+        }
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movie = similarMovies[indexPath.row]
+        let movieVc = MovieViewController(movie: movie)
+        navigationController?.pushViewController(movieVc, animated: true)
+    }
+}
+
+

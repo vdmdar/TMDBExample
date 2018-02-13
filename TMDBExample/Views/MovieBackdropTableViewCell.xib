@@ -16,7 +16,7 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LZh-ab-IM1">
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LZh-ab-IM1">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="200"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="200" id="jgW-PB-KG7"/>
@@ -24,10 +24,11 @@
                 </imageView>
             </subviews>
             <constraints>
-                <constraint firstItem="CdT-0x-lZH" firstAttribute="bottom" secondItem="LZh-ab-IM1" secondAttribute="bottom" id="5nV-ml-DNV"/>
-                <constraint firstAttribute="trailing" secondItem="LZh-ab-IM1" secondAttribute="trailing" id="9Iu-hr-JfP"/>
-                <constraint firstItem="LZh-ab-IM1" firstAttribute="leading" secondItem="CdT-0x-lZH" secondAttribute="leading" id="BtH-7m-BJg"/>
-                <constraint firstItem="LZh-ab-IM1" firstAttribute="top" secondItem="CdT-0x-lZH" secondAttribute="top" id="Nf0-zO-xNg"/>
+                <constraint firstItem="LZh-ab-IM1" firstAttribute="bottom" secondItem="CdT-0x-lZH" secondAttribute="bottom" id="0dZ-vL-O8Y"/>
+                <constraint firstItem="LZh-ab-IM1" firstAttribute="top" secondItem="CdT-0x-lZH" secondAttribute="top" id="Cdo-7j-gab"/>
+                <constraint firstItem="LZh-ab-IM1" firstAttribute="trailing" secondItem="CdT-0x-lZH" secondAttribute="trailing" id="FPg-uF-Mca"/>
+                <constraint firstItem="LZh-ab-IM1" firstAttribute="width" secondItem="y9S-j0-vc7" secondAttribute="width" id="l80-Ls-XYW"/>
+                <constraint firstItem="LZh-ab-IM1" firstAttribute="leading" secondItem="CdT-0x-lZH" secondAttribute="leading" id="lfI-M2-YJ9"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="CdT-0x-lZH"/>

@@ -9,6 +9,6 @@
 import Foundation
 import UIKit
 
-final class MovieCollectionViewCell: UICollectionViewCell, Nameable {
+final class MovieCollectionViewCell: UICollectionViewCell, NibGettable {
     @IBOutlet weak var posterImageView: UIImageView!
 }

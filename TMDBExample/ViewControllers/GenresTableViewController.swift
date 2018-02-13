@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-final class GenresTableViewController: UITableViewController {
+final class GenresTableViewController: CustomTableViewController {
     
     private var genres: [Genre] = []
     
@@ -36,6 +36,14 @@ final class GenresTableViewController: UITableViewController {
         cell.accessoryType = .disclosureIndicator
         cell.textLabel?.text = genres[indexPath.row].name
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let genre = genres[indexPath.row]
+        let fetcher = ByGenreMoviesFetcher(genreId: genre.id)
+        let moviesVc = MoviesCollectionViewController(moviesFetcher: fetcher)
+        moviesVc.title = genre.name
+        navigationController?.pushViewController(moviesVc, animated: true)
     }
     
 }

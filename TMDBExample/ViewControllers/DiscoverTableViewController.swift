@@ -9,15 +9,10 @@
 import Foundation
 import UIKit
 
-final class DiscoverTableViewController: UITableViewController {
+final class DiscoverTableViewController: CustomTableViewController {
     
     private let categories = ["Popular", "Coming soon"]
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.tableFooterView = UIView()
-    }
-    
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell()
         cell.accessoryType = .disclosureIndicator
@@ -30,7 +25,8 @@ final class DiscoverTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let moviesVc = MoviesCollectionViewController(title: categories[indexPath.row])
+        let moviesVc = MoviesCollectionViewController(moviesFetcher: PopularMoviesFetcher())
+        moviesVc.title = categories[indexPath.row]
         navigationController?.pushViewController(moviesVc, animated: true)
     }
     
