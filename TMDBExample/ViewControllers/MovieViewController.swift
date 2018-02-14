@@ -9,22 +9,29 @@
 import Foundation
 import UIKit
 
-final class MovieViewController: CustomTableViewController {
+final class MovieViewController: CustomTableViewController, MoviesCollectionPresenterDelegate {
     
-    enum Section: String {
+    fileprivate enum Section: String {
         case backdrop
         case details = "Overview"
         case cast = "Cast"
         case similar = "Similar movies"
     }
     
-    let movie: Movie
+    fileprivate let movie: Movie
+    fileprivate var sections: [Section] = [.backdrop, .details]
+    fileprivate var cast: [Cast] = []
+    fileprivate var similarMovies: [Movie] = []
     
-    var sections: [Section] = [.backdrop, .details]
+    var movies: [Movie] {
+        return similarMovies
+    }
     
-    var cast: [Cast] = []
-    
-    var similarMovies: [Movie] = []
+    private lazy var moviesPresenter: MoviesCollectionPresenter = {
+        let presenter = MoviesCollectionPresenter(delegate: self)
+        presenter.moviePosterWidth = Constant.smallPosterWidth
+        return presenter
+    }()
     
     init(movie: Movie) {
         self.movie = movie
@@ -109,6 +116,7 @@ final class MovieViewController: CustomTableViewController {
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
     }
+
 }
 
 extension MovieViewController {
@@ -121,7 +129,7 @@ extension MovieViewController {
     
     fileprivate func getBackdropCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MovieBackdropTableViewCell.name, for: indexPath) as! MovieBackdropTableViewCell
-        let imagePath = movie.backdropPath(withWidth: 1280)
+        let imagePath = movie.backdropPath(withWidth: Constant.defaultBackdropWidth)
         ImageManager.getImage(url: imagePath, completion: {
             cell.backdropImageView.image = $0
         })
@@ -133,7 +141,7 @@ extension MovieViewController {
         let actor = cast[indexPath.row]
         cell.castNameLabel.text = actor.name
         cell.castCharacterLabel.text = actor.character
-        let imagePath = actor.profileImagePath(imageWidth: 300)
+        let imagePath = actor.profileImagePath(imageWidth: Constant.defaultProfileWidth)
         ImageManager.getImage(url: imagePath, completion: {
             cell.castImageView.image = $0
         })
@@ -143,8 +151,8 @@ extension MovieViewController {
     
     fileprivate func getSimilarMoviesCell(from tableView: UITableView, indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: SimilarMoviesTableViewCell.name, for: indexPath) as! SimilarMoviesTableViewCell
-        cell.collectionView.dataSource = self
-        cell.collectionView.delegate = self
+        cell.collectionView.dataSource = moviesPresenter
+        cell.collectionView.delegate = moviesPresenter
         return cell
     }
     
@@ -185,33 +193,11 @@ extension MovieViewController {
             self.tableView.beginUpdates()
             self.tableView.insertSections([self.sections.index(of: .similar)!], with: .automatic)
             self.tableView.endUpdates()
-        }, failure: { error in
-            print(error)
+        }, failure: {
+            print($0)
         })
     }
-}
-
-extension MovieViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return similarMovies.count
-    }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MovieCollectionViewCell.name, for: indexPath) as! MovieCollectionViewCell
-        let urlStr = similarMovies[indexPath.row].posterPath(withWidth: Constant.defaultImageWidth)
-        
-        ImageManager.getImage(url: urlStr) {
-            cell.posterImageView.image = $0
-        }
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movie = similarMovies[indexPath.row]
-        let movieVc = MovieViewController(movie: movie)
-        navigationController?.pushViewController(movieVc, animated: true)
-    }
 }
 
 

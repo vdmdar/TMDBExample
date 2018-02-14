@@ -11,8 +11,8 @@ import Foundation
 class Fetcher<T> {
     
     var page: Int = 1
-    private var dataAvailable = true
-    private var isLoading = false
+    fileprivate var dataAvailable = true
+    fileprivate var isLoading = false
     
     private var onFetch: (([T]) -> Void)? = nil
     
@@ -64,10 +64,19 @@ final class ByGenreMoviesFetcher: Fetcher<Movie> {
 
 final class SearchFetcher: Fetcher<Movie> {
     
-    var query: String? = nil
+    var query: String? = nil {
+        didSet {
+            isLoading = false
+            dataAvailable = true
+            page = 1
+        }
+    }
     
     override func makeRequest() {
-        guard let query = query else { return }
+        guard let query = query else {
+            isLoading = false
+            return
+        }
         API.searchMovies(query: query, page: page, success: handleSuccess, failure: handleError)
     }
     

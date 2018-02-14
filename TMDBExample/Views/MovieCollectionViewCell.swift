@@ -11,4 +11,9 @@ import UIKit
 
 final class MovieCollectionViewCell: UICollectionViewCell, NibGettable {
     @IBOutlet weak var posterImageView: UIImageView!
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        posterImageView.image = nil
+    }
 }

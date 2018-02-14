@@ -15,16 +15,7 @@ final class GenresTableViewController: CustomTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        API.getGenres(success: { genres in
-            self.tableView.beginUpdates()
-            let indexPaths = (self.genres.count..<genres.count).map { IndexPath(row: $0, section: 0) }
-            self.genres += genres
-            self.tableView.insertRows(at: indexPaths, with: .automatic)
-            self.tableView.endUpdates()
-            
-        }, failure: { error in
-            print("👹👹👹👹👹👹👹")
-        })
+        getGenres()
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -44,6 +35,19 @@ final class GenresTableViewController: CustomTableViewController {
         let moviesVc = MoviesCollectionViewController(moviesFetcher: fetcher)
         moviesVc.title = genre.name
         navigationController?.pushViewController(moviesVc, animated: true)
+    }
+    
+    private func getGenres() {
+        API.getGenres(success: { genres in
+            self.tableView.beginUpdates()
+            let indexPaths = (self.genres.count..<genres.count).map { IndexPath(row: $0, section: 0) }
+            self.genres += genres
+            self.tableView.insertRows(at: indexPaths, with: .automatic)
+            self.tableView.endUpdates()
+            
+        }, failure: {
+            print($0)
+        })
     }
     
 }

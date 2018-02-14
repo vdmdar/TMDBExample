@@ -13,8 +13,8 @@ struct Movie: Decodable {
     let id: Int
     let title: String
     let overview: String
-    private let posterPath: String
-    private let backdropPath: String
+    private let posterPath: String?
+    private let backdropPath: String?
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MovieCodingKeys.self)
@@ -27,11 +27,11 @@ struct Movie: Decodable {
     }
     
     func posterPath(withWidth width: Int) -> String {
-        return Path.imagePath(imageWidth: width, filePath: posterPath)
+        return Path.imagePath(imageWidth: width, filePath: posterPath ?? "")
     }
     
     func backdropPath(withWidth width: Int) -> String {
-        return Path.imagePath(imageWidth: width, filePath: backdropPath)
+        return Path.imagePath(imageWidth: width, filePath: backdropPath ?? "")
     }
     
     private enum MovieCodingKeys: String, CodingKey {
@@ -41,6 +41,6 @@ struct Movie: Decodable {
         case title
         case overview
         case runtime
-        
     }
+    
 }
