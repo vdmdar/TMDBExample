@@ -13,7 +13,6 @@ struct Movie: Decodable {
     let id: Int
     let title: String
     let overview: String
-    let releaseDate: Date?
     private let posterPath: String
     private let backdropPath: String
     
@@ -23,11 +22,9 @@ struct Movie: Decodable {
         title = try container.decode(String.self, forKey: .title)
         overview = try container.decode(String.self, forKey: .overview)
         
-        let date = try container.decode(String.self, forKey: .releaseDate)
-        releaseDate = Formatter.defaultDateFormatter.date(from: date)
-        
-        posterPath = try container.decode(String.self, forKey: .posterPath)
-        backdropPath = try container.decode(String.self, forKey: .backdropPath)    }
+        posterPath = (try? container.decode(String.self, forKey: .posterPath)) ?? ""
+        backdropPath = (try? container.decode(String.self, forKey: .backdropPath)) ?? ""
+    }
     
     func posterPath(withWidth width: Int) -> String {
         return Path.imagePath(imageWidth: width, filePath: posterPath)
@@ -40,7 +37,6 @@ struct Movie: Decodable {
     private enum MovieCodingKeys: String, CodingKey {
         case posterPath = "poster_path"
         case backdropPath = "backdrop_path"
-        case releaseDate = "release_date"
         case id
         case title
         case overview

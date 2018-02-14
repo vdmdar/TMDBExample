@@ -12,7 +12,7 @@ import UIKit
 final class MoviesCollectionViewController: UICollectionViewController {
     
     private var movies: [Movie] = []
-    let moviesFetcher: Fetcher<Movie>
+    var moviesFetcher: Fetcher<Movie>!
     
     init(collectionViewLayout: UICollectionViewLayout = FlowLayouts.moviewCollectionLayout, moviesFetcher: Fetcher<Movie>) {
         self.moviesFetcher = moviesFetcher
@@ -20,13 +20,14 @@ final class MoviesCollectionViewController: UICollectionViewController {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(collectionViewLayout: FlowLayouts.moviewCollectionLayout)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView?.register(MovieCollectionViewCell.nib, forCellWithReuseIdentifier: MovieCollectionViewCell.name)
         collectionView?.backgroundColor = .white
+        collectionView?.keyboardDismissMode = .onDrag
         fetchMovies()
     }
     

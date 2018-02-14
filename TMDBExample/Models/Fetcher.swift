@@ -61,3 +61,14 @@ final class ByGenreMoviesFetcher: Fetcher<Movie> {
         API.getMoviesByGenre(genreId: genreId, page: page, success: handleSuccess, failure: handleError)
     }
 }
+
+final class SearchFetcher: Fetcher<Movie> {
+    
+    var query: String? = nil
+    
+    override func makeRequest() {
+        guard let query = query else { return }
+        API.searchMovies(query: query, page: page, success: handleSuccess, failure: handleError)
+    }
+    
+}

@@ -34,6 +34,7 @@
 		50BF7F0B202E218C00CEDFCD /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50BF7F0A202E218C00CEDFCD /* Request.swift */; };
 		50FE87A6202F32200067C9CC /* DiscoverTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FE87A5202F32200067C9CC /* DiscoverTableViewController.swift */; };
 		50FE87A8202F329C0067C9CC /* GenresTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50FE87A7202F329C0067C9CC /* GenresTableViewController.swift */; };
+		CE899DF7203431FD00216965 /* MovieSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE899DF6203431FD00216965 /* MovieSearchViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -66,6 +67,7 @@
 		50BF7F0A202E218C00CEDFCD /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		50FE87A5202F32200067C9CC /* DiscoverTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverTableViewController.swift; sourceTree = "<group>"; };
 		50FE87A7202F329C0067C9CC /* GenresTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresTableViewController.swift; sourceTree = "<group>"; };
+		CE899DF6203431FD00216965 /* MovieSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieSearchViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +151,7 @@
 				500B40E5202F65E600C63CF7 /* MoviesCollectionViewController.swift */,
 				50365CFC2031E53200E149E5 /* MovieViewController.swift */,
 				50336AC52033484500B085AF /* CustomTableViewController.swift */,
+				CE899DF6203431FD00216965 /* MovieSearchViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -242,6 +245,7 @@
 				50BF7F07202E106E00CEDFCD /* Utilities.swift in Sources */,
 				50FE87A6202F32200067C9CC /* DiscoverTableViewController.swift in Sources */,
 				50BF7F0B202E218C00CEDFCD /* Request.swift in Sources */,
+				CE899DF7203431FD00216965 /* MovieSearchViewController.swift in Sources */,
 				50365CFB2031CB6000E149E5 /* Genre.swift in Sources */,
 				50365CFF2031E59300E149E5 /* MovieDetailsTableViewCell.swift in Sources */,
 				50336AC62033484500B085AF /* CustomTableViewController.swift in Sources */,

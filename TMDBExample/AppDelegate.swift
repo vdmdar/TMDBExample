@@ -14,6 +14,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        API.searchMovies(query: "welcome", page: 1, success: {
+            print($0)
+        }, failure: {
+            print($0)
+        })
+        
         return true
     }
 

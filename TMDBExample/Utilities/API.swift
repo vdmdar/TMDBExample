@@ -32,6 +32,12 @@ struct API {
         getMovies(path: path, page: page, success: success, failure: failure)
     }
     
+    static func searchMovies(query: String, page: Int, success: @escaping ([Movie]) -> Void, failure: @escaping (Error) -> Void) {
+        let path = "search/movie"
+        let query: [String: Any] = ["query": query]
+        getMovies(path: path, page: page, queries: query, success: success, failure: failure)
+    }
+    
     static func getMovies(path: String,
                           page: Int,
                           queries: [String: Any]? = nil,
@@ -80,6 +86,7 @@ struct API {
             failure(error)
         })
     }
+    
 }
 
 private struct GenresResponseContainer: Decodable {
